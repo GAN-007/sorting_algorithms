@@ -1,201 +1,74 @@
-#include <stdlib.h>
-
 #include "sort.h"
 
 /**
-
- * csort2 - auxiliary function of radix sort
-
+ * _max - returns the max of the given integer
+ * @array: list of an integers
+ * @size: the length of the array
  *
-
- * @array: array of data to be sorted
-
- * @buff: malloc buffer
-
- * @size: size of data
-
- * @lsd: Less significant digit
-
- *
-
- * Return: No Return
-
+ * Return: max value in the array of integer
  */
-
-void csort2(int *array, int **buff, int size, int lsd)
-  
+int _max(int *array, int size)
 {
-  
-  int i, j, csize = 10, num;
-  
-  int carr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  
-  int carr2[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  
+	int i, max = array[0];
 
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      num = array[i];
-      
-      for (j = 0; j < lsd; j++)
-	
-	if (j > 0)
-	  
-	  num = num / 10;
-      
-      num = num % 10;
-      
-      buff[num][carr[num]] = array[i];
-      
-      carr[num] += 1;
-      
-    }
-  
+	for (i = 1; i < size; i++)
+		if (array[i] > max)
+			max = array[i];
+	return (max);
+}
 
-  
-  for (i = 0, j = 0; i < csize; i++)
-    
-    {
-      
-      while (carr[i] > 0)
-	
+/**
+ * _count - counts the number of the sorted array
+ * @array: list of an integers
+ * @n: the length of the array
+ * @exp: exp is 10^i
+ * @output: array to save the temporary values
+ */
+void _count(int *array, size_t n, int exp, int *output)
+{
+	int i;
+	int count[10] = {0};
+
+	for (i = 0; i < (int)n; i++)
+		count[(array[i] / exp) % 10]++;
+
+	for (i = 1; i < 10; i++)
+		count[i] += count[i - 1];
+
+	for (i = n - 1; i >= 0; i--)
 	{
-	  
-	  array[j] = buff[i][carr2[i]];
-	  
-	  carr2[i] += 1, carr[i] -= 1;
-	  
-	  j++;
-	  
+		output[count[(array[i] / exp) % 10] - 1] = array[i];
+		count[(array[i] / exp) % 10]--;
 	}
-      
-    }
-  
 
-  
-  print_array(array, size);
-  
+	for (i = 0; i < (int)n; i++)
+		array[i] = output[i];
 }
 
 /**
-
- * csort - auxiliary function of radix sort
-
+ * radix_sort - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @size: the length of the array
  *
-
- * @array: array of data to be sorted
-
- * @size: size of data
-
- * @lsd: Less significant digit
-
- *
-
- * Return: No Return
-
+ * Return: void has no return value
  */
-
-void csort(int *array, int size, int lsd)
-  
-{
-  
-  int carr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  
-  int i, j, num, csize = 10, **buff;
-  
-
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      num = array[i];
-      
-      for (j = 0; j < lsd; j++)
-	
-	if (j > 0)
-	  
-	  num = num / 10;
-      
-      num = num % 10;
-      
-      carr[num] += 1;
-      
-    }
-  
-
-  
-  if (carr[0] == size)
-    
-    return;
-  
-
-  
-  buff = malloc(sizeof(int *) * 10);
-  
-  if (!buff)
-    
-    return;
-  
-
-  
-  for (i = 0; i < csize; i++)
-    
-    if (carr[i] != 0)
-      
-      buff[i] = malloc(sizeof(int) * carr[i]);
-  
-
-  
-
-  
-  csort2(array, buff, size, lsd);
-  
-
-  
-  csort(array, size, lsd + 1);
-  
-
-  
-  for (i = 0; i < csize; i++)
-    
-    if (carr[i] > 0)
-      
-      free(buff[i]);
-  
-  free(buff);
-  
-}
-
-/**
-
- * radix_sort - sorts an array of integers in ascending order using the Radix
-
- * sort algorithm
-
- *
-
- * @array: array of data to be sorted
-
- * @size: size of data
-
- *
-
- * Return: No Return
-
- */
-
 void radix_sort(int *array, size_t size)
-  
 {
-  
-  if (size < 2)
-    
-    return;
-  
-  csort(array, size, 1);
-  
+	int exp, maximum = 0;
+	int *output = '\0';
+
+	if (array == NULL || size < 2)
+		return;
+
+	maximum = _max(array, size);
+	output = malloc(size * sizeof(int));
+	if (output == NULL)
+		return;
+
+	for (exp = 1; maximum / exp > 0; exp *= 10)
+	{
+		_count(array, size, exp, output);
+		print_array(array, size);
+	}
+	free(output);
 }

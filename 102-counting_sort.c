@@ -1,85 +1,50 @@
 #include "sort.h"
 
 /**
-
- * counting_sort - sorts an array of integers in ascending
-
- * order using the Counting sort algorithm
-
- * @array: pointer to array
-
- * @size: size of the array
-
- **/
-
+ * counting_sort - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @size: the length of the array
+ *
+ * Return: void has no return value
+ */
 void counting_sort(int *array, size_t size)
-  
 {
-  
-  int n, j, *count_array, *aux;
-  
-  size_t i;
-  
+	int *buffer, *aux, i, j, n;
 
-  
-  if (!array || size < 2)
-    
-    return;
-  
-  n = array[0];
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      if (array[i] > n)
-	
-	n = array[i];
-      
-    }
-  
-  count_array = calloc((n + 1), sizeof(int));
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      count_array[array[i]]++;
-      
-    }
-  
-  for (j = 1; j < n; j++)
-    
-    {
-      
-      count_array[j + 1] += count_array[j];
-      
-    }
-  
-  print_array(count_array, n + 1);
-  
-  aux = malloc(sizeof(int) * size);
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      count_array[array[i]]--;
-      
-      aux[count_array[array[i]]] = array[i];
-      
-    }
-  
-  for (i = 0; i < size; i++)
-    
-    {
-      
-      array[i] = aux[i];
-      
-    }
-  
-  free(aux);
-  
-  free(count_array);
-  
+	if (size <= 1)
+		return;
+	n = i = 0;
+	while (i < (int)size)
+	{
+		if (array[i] > n)
+			n = array[i];
+		i++;
+	}
+	buffer = malloc(sizeof(int) * (n + 1));
+	if (!buffer)
+		return;
+	for (j = 0; j <= n; j++)
+		buffer[j] = 0;
+
+	for (i = 0; i < (int)size; i++)
+		buffer[array[i]] += 1;
+	for (i = 1; i <= n; i++)
+		buffer[i] += buffer[i - 1];
+	print_array(buffer, (n + 1));
+	aux = malloc(sizeof(int) * (size + 1));
+
+	if (!aux)
+	{
+		free(buffer);
+		return;
+	}
+	for (i = 0; i < (int)size; i++)
+	{
+		aux[buffer[array[i]] - 1] = array[i];
+		buffer[array[i]] -= 1;
+	}
+	for (i = 0; i < (int)size; i++)
+		array[i] = aux[i];
+	free(buffer);
+	free(aux);
 }

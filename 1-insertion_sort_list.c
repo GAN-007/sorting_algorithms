@@ -1,93 +1,44 @@
 #include "sort.h"
 
-#include <stdio.h>
-
-
-
 /**
-
- * insertion_sort_list - sorts a DLL of integers in
-
- * ascending order using the insertion sort
-
- * algorithm
-
+ * insertion_sort_list - sorts a doubly linked list of integers in ascending
+ * @list: list of the doubly linked list
  *
-
- * @list: doubly linked list
-
- * Return: no return
-
+ * Return: void has no return value
  */
-
 void insertion_sort_list(listint_t **list)
-  
 {
-  
-  listint_t *ptr, *tmp;
-  
+	listint_t *head, *tmp;
 
-  
-  if (!list)
-    
-    return;
-  
+	if (!list)
+		return;
 
-  
-  ptr = *list;
-  
+	head = *list;
 
-  
-  while (ptr)
-    
-    {
-      
-      while (ptr->next && (ptr->n > ptr->next->n))
-	
+	while (head)
 	{
-	  
-	  tmp = ptr->next;
-	  
-	  ptr->next = tmp->next;
-	  
-	  tmp->prev = ptr->prev;
-	  
+		while (head->next && (head->n > head->next->n))
+		{
+			tmp = head->next;
+			head->next = tmp->next;
+			tmp->prev = head->prev;
 
-	  
-	  if (ptr->prev)
-	    
-	    ptr->prev->next = tmp;
-	  
+			if (head->prev)
+				head->prev->next = tmp;
 
-	  
-	  if (tmp->next)
-	    
-	    tmp->next->prev = ptr;
-	  
+			if (tmp->next)
+				tmp->next->prev = head;
 
-	  
-	  ptr->prev = tmp;
-	  
-	  tmp->next = ptr;
-	  
+			head->prev = tmp;
+			tmp->next = head;
 
-	  
-	  if (tmp->prev)
-	    
-	    ptr = tmp->prev;
-	  
-	  else
-	    
-	    *list = tmp;
-	  
+			if (tmp->prev)
+				head = tmp->prev;
+			else
+				*list = tmp;
 
-	  
-	  print_list(*list);
-	  
+			print_list(*list);
+		}
+		head = head->next;
 	}
-      
-      ptr = ptr->next;
-      
-    }
-  
 }

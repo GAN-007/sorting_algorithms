@@ -1,143 +1,81 @@
 #include "sort.h"
 
 /**
-
- *swap - the positions of two elements into an array
-
- *@array: array
-
- *@item1: array element
-
- *@item2: array element
-
+ * _swap - swaps ascending or descending order
+ * @array: list of the integer
+ * @int1: integer 1
+ * @int2: integer 2
  */
-
-void swap(int *array, ssize_t item1, ssize_t item2)
-  
+void _swap(int *array, ssize_t int1, ssize_t int2)
 {
-  
-  int tmp;
-  
+	int tmp;
 
-  
-  tmp = array[item1];
-  
-  array[item1] = array[item2];
-  
-  array[item2] = tmp;
-  
+	tmp = array[int1];
+	array[int1] = array[int2];
+	array[int2] = tmp;
 }
 
 /**
-
- *hoare_partition - hoare partition sorting scheme implementation
-
- *@array: array
-
- *@first: first array element
-
- *@last: last array element
-
- *@size: size array
-
- *Return: return the position of the last element sorted
-
+ * _partition - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @size: the length of the array
+ * @min: the first integer
+ * @max: the last integer index
+ *
+ * Return: void has no return value
  */
-
-int hoare_partition(int *array, int first, int last, int size)
-  
+int _partition(int *array, int min, int max, int size)
 {
-  
-  int current = first - 1, finder = last + 1;
-  
-  int pivot = array[last];
-  
+	int current = min - 1, finder = max + 1;
+	int pivot = array[max];
 
-  
-  while (1)
-    
-    {
-      
+	while (1)
+	{
 
-      
-      do {
-	
-	current++;
-	
-      } while (array[current] < pivot);
-      
-      do {
-	
-	finder--;
-	
-      } while (array[finder] > pivot);
-      
-      if (current >= finder)
-	
-	return (current);
-      
-      swap(array, current, finder);
-      
-      print_array(array, size);
-      
-    }
-  
+		do {
+			current++;
+		} while (array[current] < pivot);
+		do {
+			finder--;
+		} while (array[finder] > pivot);
+		if (current >= finder)
+			return (current);
+		_swap(array, current, finder);
+		print_array(array, size);
+	}
 }
 
 /**
-
- *qs - qucksort algorithm implementation
-
- *@array: array
-
- *@first: first array element
-
- *@last: last array element
-
- *@size: array size
-
+ * _sort - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @size: the length of the array
+ * @min: the first integer
+ * @max: the last integer index
+ *
+ * Return: void has no return value
  */
-
-void qs(int *array, ssize_t first, ssize_t last, int size)
-  
+void _sort(int *array, ssize_t min, ssize_t max, int size)
 {
-  
-  ssize_t position = 0;
-  
+	ssize_t position = 0;
 
-  
-  if (first < last)
-    
-    {
-      
-      position = hoare_partition(array, first, last, size);
-      
-      qs(array, first, position - 1, size);
-      
-      qs(array, position, last, size);
-      
-    }
-  
+	if (min < max)
+	{
+		position = _partition(array, min, max, size);
+		_sort(array, min, position - 1, size);
+		_sort(array, position, max, size);
+	}
 }
 
 /**
-
- *quick_sort_hoare - prepare the terrain to quicksort algorithm
-
- *@array: array
-
- *@size: array size
-
+ * quick_sort_hoare - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @size: the length of the array
+ *
+ * Return: void has no return value
  */
-
 void quick_sort_hoare(int *array, size_t size)
-  
 {
-  
-  if (!array || size < 2)
-    
-    return;
-  
-  qs(array, 0, size - 1, size);
-  
+	if (!array || size < 2)
+		return;
+	_sort(array, 0, size - 1, size);
 }

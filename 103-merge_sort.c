@@ -1,289 +1,107 @@
-#include <stdio.h>
-
-#include <stdlib.h>
-
 #include "sort.h"
 
-
-
 /**
-
- * copy - copies data from one buffer to another
-
- *
-
- * @src: source buffer
-
- * @dst: destination buffer
-
- * @size: size of buffers
-
- *
-
- * Return: No Return
-
+ * _printf - display the sorted data
+ * @str: message to be displayed
+ * @array: buffer of an integer
+ * @from: starting point
+ * @to: the end point
  */
-
-void copy(int *src, int *dst, int size)
-  
+void _printf(char *str, int *array, int from, int to)
 {
-  
-  int i;
-  
+	char *separator;
+	int i;
 
-  
-  for (i = 0; i < size; i++)
-    
-    dst[i] = src[i];
-  
+	printf("[%s]: ", str);
+	separator = "";
+
+	i = from;
+	while (i <= to)
+	{
+		printf("%s%d", separator, array[i]);
+		separator = ", ";
+		i++;
+	}
+	printf("\n");
 }
 
 /**
-
- * merge - merges two sets of data in ascending order
-
- * but they must already be sorted before hand
-
- * @array: first set of data
-
- * @buff: second set of data
-
- * @minL: lower range of first set of data
-
- * @maxL: upper range of first set of data
-
- * @minR: lower range of second set of data
-
- * @maxR: upper range of second set of data
-
+ * _join - merges an array of integers in ascending order
+ * @array: list of an integers
+ * @min: min index of the array
+ * @max: max index of the array
+ * @mid: mid index of the array
+ * @buffer: buffer of the integer
  *
-
- * Return: No Return
-
+ * Return: void has no return value
  */
-
-void merge(int *array, int *buff, int minL, int maxL, int minR, int maxR)
-  
+void _join(int *array, int min, int max, int mid, int *buffer)
 {
-  
-  int i = minL, j = minR, k = minL;
-  
+	int lo, lm, i;
 
-  
-  while (i <= maxL || j <= maxR)
-    
+	lo = i = min;
+	lm = mid + 1;
 
-    
-    if (i <= maxL && j <= maxR)
-      
-      if (buff[i] <= buff[j])
-	
-	array[k] = buff[i], k++, i++;
-  
-      else
-	
-	array[k] = buff[j], k++, j++;
-  
+	printf("Merging...\n");
+	_printf("left", array, min, mid);
+	_printf("right", array, mid + 1, max);
 
-  
-    else if (i > maxL && j <= maxR)
-      
-      array[k] = buff[j], k++, j++;
-  
-    else
-      
-      array[k] = buff[i], k++, i++;
-  
+	while (lo <= mid && lm <= max)
+	{
+		if (array[lo] < array[lm])
+			buffer[i++] = array[lo++];
+		else
+			buffer[i++] = array[lm++];
+	}
+
+	while (lo <= mid)
+		buffer[i++] = array[lo++];
+
+	while (lm <= max)
+		buffer[i++] = array[lm++];
+
+	for (i = min; i <= max; i++)
+		array[i] = buffer[i];
+
+	_printf("Done", array, min, max);
 }
 
 /**
-
- * printcheck - prints an array in a given range
-
+ * _sort - sorts an array of integers in ascending order
+ * @array: list of an integers
+ * @min: min index of the array
+ * @max: max index of the array
+ * @buffer: buffer of the integer
  *
-
- * @array: array of data to be print
-
- * @r1: start of range
-
- * @r2: end of range
-
- *
-
- * Return: No Return
-
+ * Return: void has no return value
  */
-
-void printcheck(int *array, int r1, int r2)
-  
+void _sort(int *array, int min, int max, int *buffer)
 {
-  
-  int i;
-  
+	int mid;
 
-  
-  for (i = r1; i <= r2; i++)
-    
-    {
-      
-      if (i > r1)
-	
-	printf(", ");
-      
-      printf("%d", array[i]);
-      
-    }
-  
-  printf("\n");
-  
+	if (min < max)
+	{
+		mid = (min + max - 1) / 2;
+		_sort(array, min, mid, buffer);
+		_sort(array, mid + 1, max, buffer);
+		_join(array, min, max, mid, buffer);
+	}
 }
 
 /**
-
- * split - recursive function to split data into merge tree
-
- *
-
- * @array: array of data to be split
-
- * @buff: auxiliary array of data for merging
-
- * @min: min range of data in array
-
- * @max: max range of data in array
-
- * @size: size of total data
-
- *
-
- * Return: No Return
-
- */
-
-void split(int *array, int *buff, int min, int max, int size)
-  
-{
-  
-  int mid, tmax, minL, maxL, minR, maxR;
-  
-
-  
-  if ((max - min) <= 0)
-    
-    return;
-  
-
-  
-  mid = (max + min + 1) / 2;
-  
-  tmax = max;
-  
-  max = mid - 1;
-  
-
-  
-  minL = min;
-  
-  maxL = max;
-  
-
-  
-  split(array, buff, min, max, size);
-  
-
-  
-  min = mid;
-  
-  max = tmax;
-  
-
-  
-  minR = min;
-  
-  maxR = max;
-  
-
-  
-  split(array, buff, min, max, size);
-  
-
-  
-  printf("Merging...\n");
-  
-  printf("[left]: ");
-  
-
-  
-  printcheck(array, minL, maxL);
-  
-
-  
-  printf("[right]: ");
-  
-
-  
-  printcheck(array, minR, maxR);
-  
-  merge(array, buff, minL, maxL, minR, maxR);
-  
-  copy(array, buff, size);
-  
-
-  
-  printf("[Done]: ");
-  
-  printcheck(array, minL, maxR);
-  
-}
-
-/**
-
  * merge_sort - sorts an array of integers in ascending order
-
- * using the Merge sort algorithm
-
+ * @array: list of an integers
+ * @size: the length of the array
  *
-
- * @array: array of data to be sorted
-
- * @size: size of data
-
- *
-
- * Return: No Return
-
+ * Return: void has no return value
  */
-
 void merge_sort(int *array, size_t size)
-  
 {
-  
-  int *buff;
-  
+	int *ptr;
 
-  
-  if (size < 2)
-    
-    return;
-  
-
-  
-  buff = malloc(sizeof(int) * size);
-  
-  if (buff == NULL)
-    
-    return;
-  
-
-  
-  copy(array, buff, size);
-  
-
-  
-  split(array, buff, 0, size - 1, size);
-  
-
-  
-  free(buff);
-  
+	ptr = malloc(sizeof(int) * size);
+	if (!ptr)
+		return;
+	_sort(array, 0, size - 1, ptr);
+	free(ptr);
 }
