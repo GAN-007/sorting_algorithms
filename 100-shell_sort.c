@@ -1,67 +1,91 @@
 #include "sort.h"
 
+#include <stdio.h>
+
 /**
- * swap - swap array elements
- * @array: array
- * @greater: index of greater int
- * @lesser: index of lesser int
+
+ * _swap - swaped 2 values.
+
+ * @array: the array for swap him values.
+
+ * @i: First index
+
+ * @j: Second index
+
+ * Return: Nothing
+
  */
 
-void swap(int *array, int greater, int lesser)
+void _swap(int *array, int i, int j)
+  
 {
-	int temp = array[greater];
+  
+  int tmp;
+  
 
-	array[greater] = array[lesser];
-	array[lesser] = temp;
+  
+  if (array[i] != array[j])
+    
+    {
+      
+      tmp = array[i];
+      
+      array[i] = array[j];
+      
+      array[j] = tmp;
+      
+    }
+  
 }
 
 
+
 /**
- * shell_sort - sort array with shell sort algorithm
- * @array: array
- * @size: size of array
+
+ * shell_sort - sort the list and print the changes
+
+ * @array: The array to sort.
+
+ * @size: Size of the array
+
+ * Return: Nothing
+
  */
 
 void shell_sort(int *array, size_t size)
+  
 {
-	size_t gap = 0, first = 0, second = 0, i = 0, j = 0;
-	int swaps = 0;
+  
+  size_t h = 0,  i, j;
+  
 
-	if (array == NULL || size < 2)
-		return;
+  
+  if (size < 2)
+    
+    return;
+  
 
-	for (gap = 0; gap < size; gap = (gap * 3) + 1)
-		;
-	gap = (gap - 1) / 3;
-	while (gap >= 1)
-	{
-		for (first = 0; first + gap < size; first++)
-		{
-			second = first + gap;
-			if (array[first] > array[second])
-			{
-				swap(array, first, second);
-				swaps++;
-			}
-		}
-		if (gap == 1)
-			break;
-		if (swaps == 0)
-		{
-			gap = (gap - 1) / 3;
-			print_array(array, size);
-		}
-		else
-			swaps = 0;
-	}
-	for (i = 0; i < size - 1; i++)
-	{
-		j = i;
-		while (array[j] > array[j + 1])
-		{
-			swap(array, j, j + 1);
-			j--;
-		}
-	}
-	print_array(array, size);
+  
+  while (h <= size / 3)
+    
+    h = h * 3 + 1;
+  
+
+  
+  while (h >= 1)
+    
+    {
+      
+      for (i = h; i < size; i++)
+	
+	for (j = i; j >= h && array[j] < array[j - h]; j -= h)
+	  
+	  _swap(array, j, j - h);
+      
+      h /= 3;
+      
+      print_array(array, size);
+      
+    }
+  
 }
